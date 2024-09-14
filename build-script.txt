@@ -1,0 +1,393 @@
+***********************
+fix display order: id,title,createdat
+get original project and run test
+
+
+Installation
+--------------
+
+New Laravel Project:
+cd c:\paul\coding\dev\website\laravel\vue
+laravel new vue-vite-spa-crud
+cd vue-vite-spa-crud
+
+Laravel Breeze - Design with Cleanup:
+composer require laravel/breeze --dev
+php artisan breeze:install blade
+resources\views\layouts\navigation.blade
+routes\web
+resources\views\layouts\app.blade
+
+Installing and Configuring Vue.js:
+package.json  (del "alpinejs...........")
+npm install vue@next vue-loader@next
+npm install --save-dev @vitejs/plugin-vue
+vite.config.js
+
+Tailwind:
+tailwind.config.js  (add: './resources/js/components/**/*.vue',)
+
+Creating Vue Component:
+resources\views\dashboard.blade
+resources\js\components\Posts\Index.vue
+resources\js\app.js
+
+
+First Vue.js Page (DataTable with Laravel API)
+--------------------------------------------------------
+
+1. Table Data from API: v-for and axios.get()
+
+Laravel Part - Posts DB Structure and API:
+[User]
+database\migrations\create_users_table
+app\Models\User
+database\factories\UserFactory
+php artisan make:seeder UserSeeder
+database\seeders\UserSeeder
+
+[Post]
+php artisan make:model Post -m
+database\migrations\create_posts_table
+app\Models\Post
+php artisan make:factory PostFactory
+database\factories\PostFactory
+php artisan make:controller Api/PostController
+app\Http\Controllers\Api\PostController
+php artisan make:seeder PostSeeder
+database\seeders\PostSeeder
+
+[Database]
+mysql -u root -p -e "CREATE DATABASE vue_vite_spa_crud" / create db: vue_vite_spa_crud utf8mb4_unicode_ci
+.env
+APP_URL=http://localhost:8000
+DB_DATABASE=vue_vite_spa_crud
+php artisan migrate:install
+php artisan migrate / php artisan migrate:fresh
+database\seeders\DatabaseSeeder
+php artisan db:seed / php artisan migrate:fresh --seed
+
+routes\api
+
+Calling API from Vue:
+resources\js\Components\Posts\Index.vue
+
+Showing API Data in Table:
+resources\js\Components\Posts\Index.vue
+
+Load Data with Vue 3 Composition API:
+resources\js\composables\posts.js  (new)
+resources\js\components\Posts\Index.vue
+vite.config.js
+jsconfig.json
+
+Eloquent API Resources to Transform Fields:
+php artisan make:resource PostResource
+app\Http\Controllers\Api\PostController
+app\Http\Resources\PostResource
+resources\js\composables\posts.js
+
+Pagination with External Vue Package:
+npm install laravel-vue-pagination
+app\Http\Controllers\Api\PostController
+resources\js\components\Posts\Index.vue
+resources\js\composables\posts.js
+
+Category - API Resource with Relationship:
+[Category]
+php artisan make:model Category -m
+database\migrations\create_categories_table
+app\Models\Category
+php artisan make:migration add_category_id_to_posts_table
+database\migrations\add_category_id_to_posts_table
+php artisan make:factory CategoryFactory
+database\factories\CategoryFactory
+php artisan make:seeder CategorySeeder
+database\seeders\CategorySeeder
+[Database]
+database\seeders\DatabaseSeeder
+php artisan migrate:fresh --seed
+
+Category Dropdown - Second Composable:
+php artisan make:controller Api/CategoryController
+app\Http\Controllers\Api\CategoryController
+php artisan make:resource CategoryResource
+app\Http\Resources\CategoryResource
+resources\js\composables\categories.js  (new)
+resources\js\components\Posts\Index.vue
+routes\api
+
+Category Dropdown - Filtering Data (Watch the Selected Category):
+resources\js\components\Posts\Index.vue
+resources\js\composables\posts.js
+app\Http\Controllers\Api\PostController
+
+Sorting Data by Clicking Column Headings:
+app\Http\Controllers\Api\PostController
+resources\js\composables\posts.js
+resources\js\components\Posts\Index.vue
+
+
+Multiple Pages: Routing in Vue
+--------------------------------------
+
+Routing - Nav Links and Posts Create Page:
+npm install vue-router@latest
+resources\js\app.js
+resources\js\components\Posts\Create.vue  (new)
+resources\views\dashboard.blade
+resources\js\layouts\App.vue  (new)
+routes\web
+
+Vue Route Names and Separate File:
+resources\js\app.js
+resources\js\layouts\App.vue
+resources\js\routes\index.js  (new)
+
+Vue Routes - Meta Title in Global Layout:
+resources\js\layouts\App.vue
+resources\js\routes\index.js
+
+
+Full CRUD of Posts
+-----------------------
+
+Post Create Form & Category Dropdown:
+resources\js\components\Posts\Create.vue
+php artisan make:request StorePostRequest
+app\Http\Requests\StorePostRequest
+app\Http\Controllers\Api\PostController
+routes\web
+resources\js\composables\posts.js
+
+Validation Errors - Catch and Show Them:
+resources\js\composables\posts.js
+resources\js\components\Posts\Create.vue
+app\Http\Requests\StorePostRequest
+
+Processing Form - Loading Indicator:
+resources\js\composables\posts.js
+resources\js\components\Posts\Create.vue
+
+File Upload Example:
+resources\js\components\Posts\Create.vue
+app\Http\Controllers\Api\PostController
+resources\js\composables\posts.js
+
+Post Edit Form - Route with Parameter:
+resources\js\components\Posts\Index.vue
+resources\js\routes\index.js
+resources\js\components\Posts\Edit.vue  (new)
+resources\js\composables\posts.js
+app\Http\Controllers\Api\PostController
+app\Http\Resources\PostResource
+
+SweetAlert for Notifications:
+npm install -S vue-sweetalert2
+resources\css\app.css
+resources\js\app.js
+resources\js\composables\posts.js
+
+Delete Post with Confirmation Modal:
+app\Http\Controllers\Api\PostController
+resources\js\composables\posts.js
+resources\js\components\Posts\Index.vue
+
+Extra Table Filters - Column and Global:
+app\Http\Controllers\Api\PostController
+resources\js\composables\posts.js
+resources\js\components\Posts\Index.vue
+
+
+Login and Permissions: Authentication and Authorization
+---------------------------------------------------------------------
+
+Two Layouts - Authenticated and Guest:
+resources\js\layouts\App.vue  (rename: Authenticated.vue)
+resources\js\layouts\Guest.vue  (new)
+resources\js\app.js
+resources\views\dashboard.blade
+resources\js\routes\index.js
+resources\js\components\Auth\Login.vue  (new)
+resources\js\components\Auth\Register.vue  (new)
+
+Login Form and First Authentication:
+resources\js\components\Auth\Login.vue
+resources\js\composables\auth.js  (new)
+app\Http\Controllers\Auth\AuthenticatedSessionController
+routes\web
+
+Login Cleanup and Laravel Sanctum:
+routes\api
+resources\js\bootstrap.js
+app\Http\Kernel
+config\cors
+resources\js\routes\index.js
+
+Show User Data and Logout:
+resources\js\composables\auth.js
+resources\js\app.js
+resources\js\layouts\Authenticated.vue
+app\Http\Controllers\Auth\AuthenticatedSessionController
+routes\web
+
+Permissions, Roles, Gates - Back-End:
+php artisan make:model Role -m
+php artisan make:model Permission -m
+app\Models\Role
+database\migrations\create_roles_table
+app\Models\Permission
+database\migrations\create_permissions_table
+php artisan make:migration "create permission role table"
+database\migrations\create_permission_role_table
+php artisan make:migration "create role user table"
+database\migrations\create_role_user_table
+app\Models\User
+php artisan make:seeder PermissionSeeder
+php artisan make:seeder RoleSeeder
+php artisan make:seeder UserSeeder
+database\seeders\PermissionSeeder
+database\seeders\RoleSeeder
+database\seeders\UserSeeder
+database\seeders\DatabaseSeeder
+php artisan migrate --seed / php artisan migrate:fresh --seed
+app\Providers\AuthServiceProvider
+app\Http\Controllers\Api\PostController
+
+Permissions Front-end - Vue CASL & v-if:
+npm install @casl/vue @casl/ability
+resources\js\app.js
+resources\js\services\ability.js  (new)
+routes\api
+resources\js\composables\auth.js
+resources\js\components\Posts\Index.vue
+
+Compile / Run:
+npm run dev / npm run build (compile)
+php artisan serve
+
+http://localhost:8000
+Email: admin@admin.com / editor@edit.com
+Password: password
+
+
+Overview - Files
+--------------------
+
+New Laravel Project:
+cd c:\paul\coding\dev\website\laravel\vue
+laravel new vue-vite-spa-crud
+cd vue-vite-spa-crud
+
+Install Packages:
+[Breeze]
+composer require laravel/breeze --dev
+php artisan breeze:install blade
+[Vue]
+npm install vue@next vue-loader@next
+npm install --save-dev @vitejs/plugin-vue
+npm install vue-router@latest
+npm install @casl/vue @casl/ability
+[Tailwind]
+tailwind.config.js  (add: './resources/js/components/**/*.vue',)
+[Pagination]
+npm install laravel-vue-pagination
+[SweetAlert Notifications]
+npm install -S vue-sweetalert2
+
+Config Files:
+app\Http\Kernel
+config\cors
+resources\css\app.css
+resources\js\app.js
+resources\js\bootstrap.js
+resources\js\services\ability.js
+jsconfig.json
+package.json  (del "alpinejs...........")
+vite.config.js
+
+Layouts:
+resources\views\dashboard.blade
+resources\views\layouts\app.blade
+resources\views\layouts\navigation.blade
+
+User:
+php artisan make:seeder UserSeeder
+database\migrations\create_users_table
+database\factories\UserFactory
+database\seeders\UserSeeder
+app\Models\User
+
+Login Authentication:
+resources\js\composables\auth.js
+app\Http\Controllers\Auth\AuthenticatedSessionController
+app\Providers\AuthServiceProvider
+resources\js\components\Auth\Login.vue
+resources\js\layouts\Authenticated.vue
+resources\js\components\Auth\Register.vue
+resources\js\layouts\Guest.vue
+
+Post:
+php artisan make:model Post -m
+php artisan make:factory PostFactory
+php artisan make:seeder PostSeeder
+php artisan make:controller Api/PostController
+php artisan make:resource PostResource
+php artisan make:request StorePostRequest
+database\migrations\create_posts_table
+database\factories\PostFactory
+database\seeders\PostSeeder
+app\Models\Post
+app\Http\Controllers\Api\PostController
+app\Http\Resources\PostResource
+app\Http\Requests\StorePostRequest
+resources\js\components\Posts\Index.vue
+resources\js\components\Posts\Create.vue
+resources\js\components\Posts\Edit.vue
+resources\js\composables\posts.js
+
+Category:
+php artisan make:model Category -m
+php artisan make:migration add_category_id_to_posts_table
+php artisan make:factory CategoryFactory
+php artisan make:seeder CategorySeeder
+php artisan make:controller Api/CategoryController
+php artisan make:resource CategoryResource
+database\migrations\create_categories_table
+database\migrations\add_category_id_to_posts_table
+database\factories\CategoryFactory
+database\seeders\CategorySeeder
+app\Models\Category
+app\Http\Controllers\Api\CategoryController
+app\Http\Resources\CategoryResource
+resources\js\composables\categories.js
+
+Permissions, Roles, Gates - Back-End:
+php artisan make:model Role -m
+php artisan make:model Permission -m
+php artisan make:migration "create permission role table"
+php artisan make:migration "create role user table"
+php artisan make:seeder PermissionSeeder
+php artisan make:seeder RoleSeeder
+database\migrations\create_roles_table
+database\migrations\create_permissions_table
+database\migrations\create_permission_role_table
+database\migrations\create_role_user_table
+database\seeders\PermissionSeeder
+database\seeders\RoleSeeder
+app\Models\Role
+app\Models\Permission
+
+Database:
+mysql -u root -p -e "CREATE DATABASE vue_vite_spa_crud" / create db: vue_vite_spa_crud utf8mb4_unicode_ci
+.env
+APP_URL=http://localhost:8000
+DB_DATABASE=vue_vite_spa_crud
+php artisan migrate / php artisan migrate:fresh
+database\seeders\DatabaseSeeder
+php artisan db:seed / php artisan migrate:fresh --seed
+
+Routes:
+routes\api
+routes\web
+resources\js\routes\index.js
